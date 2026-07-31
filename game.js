@@ -814,7 +814,7 @@
     ctx.fill();
 
     // Shield bubble
-    if (state.shield > 0 && state.mode === "play") {
+    if (state.shield > 0 && (state.mode === "play" || state.mode === "shot")) {
       ctx.strokeStyle = `rgba(125, 211, 252, ${0.35 + Math.sin(state.time * 8) * 0.2})`;
       ctx.lineWidth = 2.5;
       ctx.beginPath();
@@ -1086,7 +1086,7 @@
 
     paintBackground();
 
-    if (state.mode === "play" || state.mode === "pause" || state.mode === "gameover") {
+    if (state.mode === "play" || state.mode === "pause" || state.mode === "gameover" || state.mode === "shot") {
       for (const b of bullets) drawBullet(b);
       for (const e of enemies) drawEnemy(e);
       for (const pk of pickups) drawPickup(pk);
@@ -1239,11 +1239,136 @@
     showMenu();
   });
 
+  /**
+   * Screenshot helper: open with ?shot=menu|play|power|boss
+   * Used to capture repo promo images via headless Chrome.
+   */
+  function setupScreenshotScene(kind) {
+    audio.enabled = false;
+    document.body.classList.add("shot-mode");
+
+    if (kind === "menu" || !kind) {
+      showMenu();
+      howto.classList.add("hidden");
+      return;
+    }
+
+    // Start a live play scene, then freeze a pretty frame
+    resetGame();
+    audio.enabled = false;
+    state.score = kind === "boss" ? 2480 : kind === "power" ? 960 : 420;
+    state.wave = kind === "boss" ? 7 : kind === "power" ? 4 : 3;
+    state.lives = kind === "power" ? 4 : 3;
+    state.enemiesThisWave = 99;
+    state.enemiesToSpawn = 99;
+    state.enemiesKilled = 0;
+    state.spawnTimer = 99;
+    player.x = W * 0.2;
+    player.y = H * 0.48;
+
+    enemies = [];
+    bullets = [];
+    pickups = [];
+    particles = [];
+
+    if (kind === "play") {
+      state.multi = 0;
+      state.rapid = 0;
+      state.shield = 0;
+      enemies.push(
+        { x: 520, y: 120, w: 36, h: 32, vx: -40, vy: 0, hp: 1, maxHp: 1, type: "mariachi", t: 1, score: 10 },
+        { x: 640, y: 260, w: 42, h: 38, vx: -30, vy: 10, hp: 2, maxHp: 3, type: "bandito", t: 2, score: 25 },
+        { x: 720, y: 400, w: 36, h: 32, vx: -50, vy: -10, hp: 1, maxHp: 1, type: "mariachi", t: 3, score: 10 },
+        { x: 580, y: 340, w: 50, h: 40, vx: -25, vy: 5, hp: 3, maxHp: 5, type: "vaquero", t: 0.5, score: 50 }
+      );
+      bullets.push(
+        { x: 280, y: H * 0.48, vx: 0, vy: 0, r: 7, life: 9, color: "#c084fc", kind: "player" },
+        { x: 320, y: H * 0.48 - 12, vx: 0, vy: 0, r: 5, life: 9, color: "#a855f7", kind: "player" },
+        { x: 320, y: H * 0.48 + 12, vx: 0, vy: 0, r: 5, life: 9, color: "#a855f7", kind: "player" }
+      );
+      burst(360, H * 0.42, "#d8b4fe", 10, 80);
+    } else if (kind === "power") {
+      state.shield = 6;
+      state.rapid = 5;
+      state.multi = 5;
+      enemies.push(
+        { x: 600, y: 180, w: 42, h: 38, vx: -20, vy: 0, hp: 2, maxHp: 3, type: "bandito", t: 1, score: 25 },
+        { x: 700, y: 360, w: 50, h: 40, vx: -20, vy: 0, hp: 4, maxHp: 5, type: "vaquero", t: 2, score: 50 }
+      );
+      pickups.push(
+        { x: 360, y: 160, r: 12, type: "shield", color: "#7dd3fc", life: 99, t: 0, vy: 0 },
+        { x: 420, y: 280, r: 12, type: "rapid", color: "#fde047", life: 99, t: 1, vy: 0 },
+        { x: 380, y: 400, r: 12, type: "multi", color: "#e9d5ff", life: 99, t: 2, vy: 0 },
+        { x: 480, y: 220, r: 12, type: "heal", color: "#fca5a5", life: 99, t: 3, vy: 0 }
+      );
+      // Triple-shot volley frozen mid-air
+      for (const ang of [-0.18, 0, 0.18]) {
+        bullets.push({
+          x: 300,
+          y: player.y + ang * 40,
+          vx: 0,
+          vy: 0,
+          r: 6,
+          life: 9,
+          color: "#d8b4fe",
+          kind: "player",
+        });
+      }
+    } else if (kind === "boss") {
+      state.shield = 3;
+      enemies.push({
+        x: 620,
+        y: H * 0.5,
+        w: 72,
+        h: 56,
+        vx: -10,
+        vy: 0,
+        hp: 10,
+        maxHp: 16,
+        type: "el_jefe",
+        t: 1.2,
+        score: 140,
+      });
+      enemies.push(
+        { x: 760, y: 140, w: 36, h: 32, vx: -15, vy: 0, hp: 1, maxHp: 1, type: "mariachi", t: 0, score: 10 },
+        { x: 780, y: 420, w: 36, h: 32, vx: -15, vy: 0, hp: 1, maxHp: 1, type: "mariachi", t: 2, score: 10 }
+      );
+      bullets.push(
+        { x: 340, y: H * 0.5, vx: 0, vy: 0, r: 7, life: 9, color: "#c084fc", kind: "player" },
+        { x: 500, y: H * 0.45, vx: 0, vy: 0, r: 6, life: 9, color: "#f59e0b", kind: "enemy" }
+      );
+      burst(560, H * 0.48, "#f59e0b", 14, 100);
+      burst(400, H * 0.5, "#c084fc", 10, 90);
+    }
+
+    updateHud();
+    // Frozen play scene (draws entities, no simulation)
+    state.mode = "shot";
+    hideMenus();
+
+    document.documentElement.dataset.shotReady = "0";
+    let frames = 0;
+    const wait = setInterval(() => {
+      frames += 1;
+      state.time += 0.08; // wing flap animation only
+      if (frames >= 12) {
+        clearInterval(wait);
+        document.documentElement.dataset.shotReady = "1";
+      }
+    }, 40);
+  }
+
   // Boot
   bestEl.textContent = String(state.best);
   setSoundButton();
   seedBackground();
   updateHud();
-  showMenu();
+
+  const shot = new URLSearchParams(location.search).get("shot");
+  if (shot) {
+    setupScreenshotScene(shot);
+  } else {
+    showMenu();
+  }
   requestAnimationFrame(frame);
 })();

@@ -311,3 +311,16 @@ body {
     text-align: left;
   }
 }
+
+/* Cleaner frame for automated repo screenshots */
+body.shot-mode {
+  padding: 20px;
+  min-height: auto;
+  background:
+    radial-gradient(900px 480px at 50% 0%, #4c1d95 0%, transparent 55%),
+    #0b0818;
+}
+
+body.shot-mode .help {
+  display: none;
+}
