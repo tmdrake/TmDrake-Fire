@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TmDrake Fire — Purple Dragon Shooter</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="hud">
+      <div class="brand">
+        <span class="logo">🟣🐉</span>
+        <div>
+          <h1>TmDrake Fire</h1>
+          <p class="tagline">Purple dragon · Sombrero sky battles</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+        <div class="stat"><span class="label">Wave</span><span id="wave">1</span></div>
+        <div class="stat"><span class="label">HP</span><span id="hp">♥♥♥</span></div>
+        <div class="stat power-stat"><span class="label">Power</span><span id="power">—</span></div>
+      </div>
+    </header>
+
+    <main class="stage-wrap">
+      <canvas id="game" width="900" height="560" aria-label="TmDrake Fire game canvas"></canvas>
+
+      <!-- Main menu -->
+      <div id="menu" class="overlay">
+        <div class="panel menu-panel">
+          <div class="dragon-icon">🔥🟣🐉🔥</div>
+          <h2>TmDrake Fire</h2>
+          <p class="menu-sub">Fly the purple dragon. Roast the sombrero squadron.</p>
+
+          <div class="menu-buttons">
+            <button id="btn-play" type="button" class="btn primary">Start Flight</button>
+            <button id="btn-howto" type="button" class="btn secondary">How to Play</button>
+            <button id="btn-sound" type="button" class="btn secondary">Sound: On</button>
+          </div>
+
+          <div id="howto" class="howto hidden">
+            <p><strong>Move:</strong> WASD / Arrows</p>
+            <p><strong>Shoot:</strong> Space / Click (hold OK)</p>
+            <p><strong>Pause:</strong> P &nbsp;·&nbsp; <strong>Mute:</strong> M</p>
+            <p class="power-list">
+              <span class="pill shield">🛡 Shield</span>
+              <span class="pill rapid">⚡ Rapid</span>
+              <span class="pill multi">✦ Triple</span>
+              <span class="pill heal">♥ Heart</span>
+            </p>
+          </div>
+
+          <p class="hint">Best score this session: <span id="best-score">0</span></p>
+        </div>
+      </div>
+
+      <!-- Pause / game over reuse overlay -->
+      <div id="overlay" class="overlay hidden">
+        <div class="panel">
+          <div class="dragon-icon" id="overlay-emoji">🔥🐉🔥</div>
+          <h2 id="overlay-title">Paused</h2>
+          <p id="overlay-msg"></p>
+          <div class="menu-buttons">
+            <button id="overlay-btn" type="button" class="btn primary">Continue</button>
+            <button id="overlay-menu" type="button" class="btn secondary">Main Menu</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="help">
+      <span>↑↓←→ / WASD</span>
+      <span>Space shoot</span>
+      <span>P pause</span>
+      <span>M mute</span>
+      <span>Grab glowing orbs for power-ups</span>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
