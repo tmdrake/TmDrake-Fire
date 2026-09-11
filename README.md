@@ -14,6 +14,8 @@ Built as a first Mac game project — pure HTML / CSS / JavaScript. No install r
 open index.html
 ```
 
+**Batocera:** this is **not** an SNES/NES ROM. On a Batocera PC it runs from **Ports** via a WebKit launcher. See [PORTING.md](PORTING.md) and the files in [`batocera/`](batocera/).
+
 ## Screenshots
 
 ### Main menu
@@ -30,13 +32,15 @@ open index.html
 
 ## Controls
 
-| Action | Keys |
-|--------|------|
-| Move | WASD / Arrow keys |
-| Shoot | Space / Click (hold OK) |
-| Pause | P |
-| Mute | M |
-| Restart (game over) | R |
+| Action | Keys | Xbox pad (Batocera Ports) |
+|--------|------|---------------------------|
+| Move | WASD / Arrow keys | D-pad / left stick |
+| Shoot | Space / Click (hold OK) | A or RT |
+| Start / continue | Enter | Start |
+| Pause | P | B |
+| Mute | M | X |
+| Restart (game over) | R | Y |
+| Quit (Batocera) | Esc / Alt+F4 | Back + Start |
 
 ## Features
 
@@ -54,6 +58,8 @@ index.html          # shell + menus
 style.css           # purple theme UI
 game.js             # game loop, entities, audio, drawing
 screenshots/        # repo promo shots
+PORTING.md          # Batocera / living-room PC notes
+batocera/           # Ports launcher, pad map
 ```
 
 ## Recapture screenshots
